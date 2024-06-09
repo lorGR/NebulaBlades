@@ -1,11 +1,33 @@
-[gd_scene load_steps=2 format=3 uid="uid://cikpa1deo76uo"]
+[gd_scene format=3 uid="uid://cikpa1deo76uo"]
 
-[ext_resource type="PackedScene" uid="uid://b3hjtsk7m88p3" path="res://scenes/test.tscn" id="1_xi02x"]
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Main" type="Node2D"]
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_top = 1.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.341775, 0.254547, 0.22731, 1)
 
-[node name="TextEdit" parent="." instance=ExtResource("1_xi02x")]
-offset_left = 334.0
-offset_top = 208.0
-offset_right = 543.0
-offset_bottom = 277.0
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 55.0
+offset_right = 148.0
+offset_bottom = 78.0
+text = "Nebula Blades"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 214.0
+offset_top = 267.0
+offset_right = 222.0
+offset_bottom = 275.0
+scale = Vector2(15.7801, 5.44841)
+text = "play"
