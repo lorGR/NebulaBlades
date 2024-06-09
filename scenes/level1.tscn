@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dkaw0sl3nu53u"]
+[gd_scene load_steps=3 format=3 uid="uid://dkaw0sl3nu53u"]
 
 [ext_resource type="Script" path="res://scenes/level1.gd" id="1_bcn34"]
+[ext_resource type="PackedScene" uid="uid://ewndmq75243t" path="res://scenes/player.tscn" id="2_1lsva"]
 
 [node name="Level1" type="Node2D"]
 script = ExtResource("1_bcn34")
@@ -19,5 +20,8 @@ offset_right = 224.0
 offset_bottom = 629.0
 theme_override_font_sizes/font_size = 80
 text = "Back"
+
+[node name="Player" parent="." instance=ExtResource("2_1lsva")]
+position = Vector2(448, 297)
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
