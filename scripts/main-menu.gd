@@ -11,6 +11,6 @@ func _process(delta):
 
 
 func _on_btnstart_pressed():
-	var level1 = "res://scenes/level1.tscn"
+	var level1 = "res://scenes/levels/level1.tscn"
 	get_tree().change_scene_to_file(level1)
 	print("Start BTN Pressed")

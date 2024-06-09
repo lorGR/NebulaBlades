@@ -1,8 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://caj417fmmy1gy"]
+[gd_scene load_steps=5 format=3 uid="uid://caj417fmmy1gy"]
 
 [ext_resource type="Script" path="res://scripts/main-menu.gd" id="1_evnen"]
+[ext_resource type="Texture2D" uid="uid://db6kupuqhhfpf" path="res://assets/background.jpg" id="2_j1okw"]
+[ext_resource type="FontFile" uid="uid://c6rancij5ql7w" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="3_ln8mg"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_navbt"]
+font = ExtResource("3_ln8mg")
+font_size = 64
 
 [node name="Control" type="Control"]
+clip_contents = true
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,30 +18,33 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_evnen")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 0
-offset_top = 1.0
-offset_right = 1152.0
-offset_bottom = 648.0
-color = Color(0.341775, 0.254547, 0.22731, 1)
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(585, 322)
+scale = Vector2(0.897707, 0.815531)
+texture = ExtResource("2_j1okw")
 
 [node name="lbl-title" type="Label" parent="."]
 layout_mode = 0
-offset_left = 247.0
-offset_top = 40.0
-offset_right = 837.0
-offset_bottom = 156.0
+offset_left = 58.0
+offset_top = 46.0
+offset_right = 826.0
+offset_bottom = 162.0
+scale = Vector2(0.747933, 1.15927)
 theme_override_font_sizes/font_size = 85
 text = "Nebula Blades"
+label_settings = SubResource("LabelSettings_navbt")
 
 [node name="btn-start" type="Button" parent="."]
-layout_mode = 0
-offset_left = 453.0
-offset_top = 242.0
-offset_right = 671.0
-offset_bottom = 374.0
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 85.0
+offset_top = -15.5
+offset_right = 46.0
+offset_bottom = 20.0
+grow_vertical = 2
 scale = Vector2(1.00269, 1.01595)
-theme_override_font_sizes/font_size = 70
 text = "Start"
 
 [connection signal="pressed" from="btn-start" to="." method="_on_btnstart_pressed"]
