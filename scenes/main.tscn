@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cikpa1deo76uo"]
+[gd_scene format=3 uid="uid://caj417fmmy1gy"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -17,17 +17,19 @@ color = Color(0.341775, 0.254547, 0.22731, 1)
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = 36.0
-offset_top = 55.0
-offset_right = 148.0
-offset_bottom = 78.0
+offset_left = 247.0
+offset_top = 40.0
+offset_right = 837.0
+offset_bottom = 156.0
+theme_override_font_sizes/font_size = 85
 text = "Nebula Blades"
 
-[node name="Button" type="Button" parent="."]
+[node name="btn-start" type="Button" parent="."]
 layout_mode = 0
-offset_left = 214.0
-offset_top = 267.0
-offset_right = 222.0
-offset_bottom = 275.0
-scale = Vector2(15.7801, 5.44841)
-text = "play"
+offset_left = 453.0
+offset_top = 242.0
+offset_right = 671.0
+offset_bottom = 374.0
+theme_override_font_sizes/font_size = 70
+text = "Start"
+flat = true
