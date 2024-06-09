@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://cikpa1deo76uo"]
+
+[ext_resource type="PackedScene" uid="uid://b3hjtsk7m88p3" path="res://scenes/test.tscn" id="1_xi02x"]
+
+[node name="Main" type="Node2D"]
+
+[node name="TextEdit" parent="." instance=ExtResource("1_xi02x")]
+offset_left = 334.0
+offset_top = 208.0
+offset_right = 543.0
+offset_bottom = 277.0
