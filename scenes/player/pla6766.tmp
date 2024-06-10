@@ -237,7 +237,7 @@ shape = SubResource("RectangleShape2D_vgr8m")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player"]]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_7kx21")
-animation = &"hurt"
+animation = &"idle"
 autoplay = "idle"
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_entered"]
