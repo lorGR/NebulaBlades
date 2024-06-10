@@ -1,9 +1,26 @@
-[gd_scene load_steps=13 format=3 uid="uid://ctnvkae87y5x4"]
+[gd_scene load_steps=17 format=3 uid="uid://ctnvkae87y5x4"]
 
 [ext_resource type="Script" path="res://scenes/npcs/slime.gd" id="1_4d7n0"]
 [ext_resource type="Texture2D" uid="uid://bhap86w78h3qv" path="res://assets/sprites/slime_green.png" id="1_7tdle"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hjk83"]
+size = Vector2(10, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3kayr"]
+atlas = ExtResource("1_7tdle")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yjkw8"]
+atlas = ExtResource("1_7tdle")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m7k55"]
+atlas = ExtResource("1_7tdle")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7vjcv"]
+atlas = ExtResource("1_7tdle")
+region = Rect2(0, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pk2nr"]
 atlas = ExtResource("1_7tdle")
@@ -39,6 +56,23 @@ region = Rect2(72, 24, 24, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_wnoce"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3kayr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yjkw8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m7k55")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7vjcv")
+}],
+"loop": true,
+"name": &"die",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pk2nr")
@@ -80,12 +114,15 @@ script = ExtResource("1_4d7n0")
 [node name="Area2D" type="Area2D" parent="." groups=["enemy"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" groups=["enemy"]]
+position = Vector2(0, -5)
 shape = SubResource("RectangleShape2D_hjk83")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["enemy"]]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_wnoce")
-animation = &"move"
+animation = &"die"
 autoplay = "move"
+frame_progress = 0.917269
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_changed"]
