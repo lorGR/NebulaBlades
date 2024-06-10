@@ -5,7 +5,6 @@ extends Node2D
 @export var DAMAGE: float = 2
 @onready var player_animate_sprite = $AnimatedSprite2D
 @onready var area_2d = $Area2D
-
 var enemy
 
 func melee(body: Node2D):
