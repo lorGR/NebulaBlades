@@ -133,7 +133,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_t6wpi")
 }],
-"loop": false,
+"loop": true,
 "name": &"die",
 "speed": 5.0
 }, {
@@ -150,7 +150,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_8aauw")
 }],
-"loop": false,
+"loop": true,
 "name": &"hurt",
 "speed": 5.0
 }, {
@@ -237,8 +237,7 @@ shape = SubResource("RectangleShape2D_vgr8m")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player"]]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_7kx21")
-animation = &"die"
+animation = &"run"
 autoplay = "idle"
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
-[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

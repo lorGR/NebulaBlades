@@ -21,14 +21,16 @@ func _ready():
 	pass
 	
 func _process(delta):
-	if HEALTH <= 0:
+	if HEALTH <= 0 && animated_sprite_2d.animation != "die":
+		print("died")
 		animated_sprite_2d.play("die")
-		queue_free()
+		self.SPEED = 0
+		if animated_sprite_2d.frame == 3:
+			animated_sprite_2d.stop()
 
 func _on_area_2d_area_entered(area):
 	if area.is_in_group("enemy"):
 		var slime = area.get_parent()
-		print("An enemy touched me Q_Q")
 		melee(slime)
 		# Take damage or die or whatever
 		

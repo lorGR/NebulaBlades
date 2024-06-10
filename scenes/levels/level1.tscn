@@ -22,10 +22,12 @@ offset_bottom = 629.0
 theme_override_font_sizes/font_size = 80
 text = "Back"
 
-[node name="Player" parent="." instance=ExtResource("2_1lsva")]
-position = Vector2(448, 297)
-
 [node name="Slime" parent="." instance=ExtResource("4_j261j")]
 position = Vector2(384, 301)
+scale = Vector2(2, 2)
+
+[node name="Player" parent="." instance=ExtResource("2_1lsva")]
+position = Vector2(448, 297)
+scale = Vector2(1.99069, 2)
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
