@@ -240,9 +240,8 @@ shape = SubResource("RectangleShape2D_q6m5k")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_l0p0v")
-animation = &"idle"
+animation = &"die"
 autoplay = "idle"
-frame_progress = 0.417955
 
 [node name="HealthComponent" parent="." instance=ExtResource("3_y0g1l")]
 MAX_HEALTH = 35.0
@@ -256,3 +255,4 @@ shape = SubResource("RectangleShape2D_4tw7v")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animation_finished"]
 [connection signal="area_entered" from="HitboxComponent" to="." method="_on_area_entered"]
+[connection signal="area_exited" from="HitboxComponent" to="." method="_on_area_exited"]

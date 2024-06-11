@@ -4,18 +4,32 @@ extends CharacterBody2D
 @export_category("STATS")
 @export var SPEED: float = 35.0
 @export var DAMAGE: float = 2.0
-@export var ATTACK_SPEED: float = 2.3
+@export var ATTACK_SPEED: float = 1
 
-@onready var hitbox_component = $HitboxComponent
+@onready var slime_hitbox = $HitboxComponent
 @onready var animated_sprite = $AnimatedSprite2D
 @onready var player = %Player
+var player_hitbox: HitboxComponent
+
+var attack = Attack.new()
+
 #endregion
 #region built-ins
-func _process(delta):
+func _ready():
+	attack.attack_damage = DAMAGE
+	attack.attack_speed = ATTACK_SPEED
+	
+	if player.get_node("HitboxComponent"):
+		player_hitbox = player.get_node("HitboxComponent")
+	
+func _physics_process(delta):
 	if player != null:
 		var direction = (player.global_position - global_position).normalized()
 		position += direction * SPEED * delta # move towards player pos
 		flip_sprite(direction)
+
+	if slime_hitbox.overlaps_area(player_hitbox):
+		player_hitbox.damage(attack)
 
 #endregion
 #region signals
@@ -26,15 +40,10 @@ func _on_animation_finished():
 		queue_free()
 
 func _on_area_entered(area):
-	if area is HitboxComponent:
+	if area is HitboxComponent and area.get_parent().name == "Player":
 		var hitbox: HitboxComponent = area
-		var attack = Attack.new()
-		attack.attack_damage = DAMAGE
-		attack.attack_speed = ATTACK_SPEED
 		hitbox.damage(attack)
 
-func _on_timer_timeout():
-	pass
 #endregion
 #region custom
 func flip_sprite(direction: Vector2):

@@ -6,10 +6,17 @@ extends CharacterBody2D
 @export var DAMAGE: float = 10.0
 @export var ATTACK_SPEED: float = 1.2
 
+@onready var player_hitbox = $HitboxComponent
+
 @onready var animated_sprite = $AnimatedSprite2D
-var taking_damage = false
+var overlaping_areas = []
+var attack = Attack.new()
+
 #endregion
 #region built-ins
+func _ready():
+	attack.attack_damage = DAMAGE
+	attack.attack_speed = ATTACK_SPEED
 func _process(delta):
 	pass
 
@@ -20,11 +27,14 @@ func _physics_process(delta):
 	if direction.length() > 0:
 		direction = direction.normalized()
 		position += direction * SPEED * delta
-		if (!self.taking_damage):
+		if (!player_hitbox.taking_damage):
 			animated_sprite.play("run")
 	else:
-		if (!self.taking_damage):
+		if (!player_hitbox.taking_damage):
 			animated_sprite.play("idle")
+
+	for hitbox in overlaping_areas:
+		hitbox.damage(attack)
 
 	flip_sprite(direction)
 
@@ -32,17 +42,23 @@ func _physics_process(delta):
 #region signals
 func _on_area_entered(area):
 	if area is HitboxComponent:
-		taking_damage = true
 		var hitbox: HitboxComponent = area
-		var attack = Attack.new()
-		attack.attack_damage = DAMAGE
-		attack.attack_speed = ATTACK_SPEED
 		hitbox.damage(attack)
+		overlaping_areas.append(area)
+		print("areas inside: " + str(player_hitbox.get_overlapping_areas()))
 
+func _on_area_exited(area):
+	if area is HitboxComponent:
+		overlaping_areas = overlaping_areas.filter(func(exited_area): return area != exited_area)
+	
 func _on_animation_finished():
 	if animated_sprite.animation == "hurt" || animated_sprite.animation == "run":
-		self.taking_damage = false
+		player_hitbox.taking_damage = false
 		animated_sprite.play("idle")
+	if animated_sprite.animation == "die":
+		var mainMenu = "res://scenes/main.tscn"
+		get_tree().change_scene_to_file(mainMenu)
+
 #endregion
 #region custom
 func flip_sprite(direction: Vector2):
