@@ -1,59 +1,53 @@
-extends Node2D
+extends CharacterBody2D
 
-@export var SPEED: float = 250.0
-@export var HEALTH: float = 35.0
-@export var DAMAGE: float = 2
-@onready var player_animate_sprite = $AnimatedSprite2D
-@onready var area_2d = $Area2D
-var enemy
+#region variables
+@export_category("STATS")
+@export var SPEED: float = 300.0
+@export var DAMAGE: float = 10.0
+@export var ATTACK_SPEED: float = 1.2
 
-func melee(body: Node2D):
-	body.HEALTH -= DAMAGE
-	print("dealt " + str(DAMAGE) + " to " + body.name)
+@onready var animated_sprite = $AnimatedSprite2D
+var taking_damage = false
+#endregion
+#region built-ins
+func _process(delta):
+	pass
 
 func _physics_process(delta):
 	var vertical = Input.get_axis("up", "down")
 	var horizontal = Input.get_axis("left", "right")
 	var direction = Vector2(horizontal, vertical)
-	
-	if (Input.is_action_just_released("up") || Input.is_action_just_released("down") || Input.is_action_just_released("left") || Input.is_action_just_released("right")):
-		player_animate_sprite.play("idle")
-	elif (area_2d.overlaps_area(enemy)):
-			SPEED == 0
-			player_animate_sprite.play("hurt")
-			print("running + hitting slime")
-			
-
-	if direction != Vector2(0, 0):
-		player_animate_sprite.play("run")
-	
-	
-	
-		
-	if direction.x > 0:
-		player_animate_sprite.flip_h = false
-	elif direction.x < 0:
-		player_animate_sprite.flip_h = true
-		
 	if direction.length() > 0:
 		direction = direction.normalized()
 		position += direction * SPEED * delta
-	
-func _process(delta):
-	if HEALTH <= 0 && player_animate_sprite.animation != "die":
-		self.SPEED = 0
-		player_animate_sprite.play("die")
+		if (!self.taking_damage):
+			animated_sprite.play("run")
+	else:
+		if (!self.taking_damage):
+			animated_sprite.play("idle")
 
+	flip_sprite(direction)
+
+#endregion
+#region signals
 func _on_area_entered(area):
-	if area.is_in_group("enemy"):
-		var slime = area.get_parent()
-		enemy = area
-		melee(slime)
-		slime.get_child(1).play("hurt")
-		
-	if area.is_in_group("collectible"):
-		print("Collected something")
+	if area is HitboxComponent:
+		taking_damage = true
+		var hitbox: HitboxComponent = area
+		var attack = Attack.new()
+		attack.attack_damage = DAMAGE
+		attack.attack_speed = ATTACK_SPEED
+		hitbox.damage(attack)
 
 func _on_animation_finished():
-	if player_animate_sprite.animation == "hurt":
-		player_animate_sprite.play("idle")
+	if animated_sprite.animation == "hurt" || animated_sprite.animation == "run":
+		self.taking_damage = false
+		animated_sprite.play("idle")
+#endregion
+#region custom
+func flip_sprite(direction: Vector2):
+	if direction.x > 0:
+		animated_sprite.flip_h = false
+	elif direction.x < 0:
+		animated_sprite.flip_h = true
+#endregion

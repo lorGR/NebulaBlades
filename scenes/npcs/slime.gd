@@ -1,51 +1,45 @@
-extends Node2D
+extends CharacterBody2D
 
+#region variables
+@export_category("STATS")
 @export var SPEED: float = 35.0
-@export var HEALTH: float = 10.0
-@export var DAMAGE: float = 10.0
-@export var ATTACK_SPEED: float = 5.0
-@onready var timer = $Timer
+@export var DAMAGE: float = 2.0
+@export var ATTACK_SPEED: float = 2.3
 
-@onready var slime_animated_sprite = $AnimatedSprite2D
-var player: Node2D
-
-func melee(body: Node2D):
-	if (timer.is_stopped()):
-		body.HEALTH -= DAMAGE
-		timer.start(ATTACK_SPEED)
-		print("dealt " + str(DAMAGE) + " to " + body.name)
-
-
-func _ready():
-	print("slime spawned")
-	player = %Player
-
-func _process(delta: float):
-	if HEALTH <= 0:
-		if slime_animated_sprite.animation != "die":
-			SPEED = 0
-			slime_animated_sprite.play("die")
-			
-
-	if player:
-		# Calculate the direction to the player
+@onready var hitbox_component = $HitboxComponent
+@onready var animated_sprite = $AnimatedSprite2D
+@onready var player = %Player
+#endregion
+#region built-ins
+func _process(delta):
+	if player != null:
 		var direction = (player.global_position - global_position).normalized()
-		# Move the enemy towards the player
-		position += direction * SPEED * delta
+		position += direction * SPEED * delta # move towards player pos
+		flip_sprite(direction)
 
-		if direction.x > 0:
-			slime_animated_sprite.flip_h = false
-		else:
-			slime_animated_sprite.flip_h = true
+#endregion
+#region signals
+func _on_animation_finished():
+	if animated_sprite.animation == "hurt":
+		animated_sprite.play("move")
+	if animated_sprite.animation == "die":
+		queue_free()
 
 func _on_area_entered(area):
-	if area.is_in_group("player"):
-		melee(player)
-		player.get_child(1).play("hurt")
+	if area is HitboxComponent:
+		var hitbox: HitboxComponent = area
+		var attack = Attack.new()
+		attack.attack_damage = DAMAGE
+		attack.attack_speed = ATTACK_SPEED
+		hitbox.damage(attack)
 
-func _on_animation_finished():
-	if slime_animated_sprite.animation == "die":
-		queue_free()
-		
-	if slime_animated_sprite.animation == "hurt":
-		slime_animated_sprite.play("move")
+func _on_timer_timeout():
+	pass
+#endregion
+#region custom
+func flip_sprite(direction: Vector2):
+	if direction.x > 0:
+		animated_sprite.flip_h = false
+	elif direction.x < 0:
+		animated_sprite.flip_h = true
+#endregion

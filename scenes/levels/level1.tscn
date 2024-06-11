@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://dkaw0sl3nu53u"]
 
 [ext_resource type="Script" path="res://scenes/levels/level1.gd" id="1_bcn34"]
-[ext_resource type="PackedScene" uid="uid://cx8g7nr8qllhf" path="res://scenes/npcs/slime1.tscn" id="3_a7o7f"]
-[ext_resource type="PackedScene" uid="uid://dx6436i0hpve7" path="res://scenes/player/player1.tscn" id="3_peoet"]
+[ext_resource type="PackedScene" uid="uid://cx8g7nr8qllhf" path="res://scenes/npcs/slime.tscn" id="3_a7o7f"]
+[ext_resource type="PackedScene" uid="uid://dx6436i0hpve7" path="res://scenes/player/player.tscn" id="3_peoet"]
 
-[node name="Level1" type="Node2D"]
+[node name="Level1" type="Node2D" groups=["level"]]
 script = ExtResource("1_bcn34")
 
 [node name="Control" type="Control" parent="."]
@@ -28,5 +28,8 @@ position = Vector2(286, 304)
 
 [node name="Slime" parent="." instance=ExtResource("3_a7o7f")]
 position = Vector2(532, 239)
+
+[node name="Slime2" parent="." instance=ExtResource("3_a7o7f")]
+position = Vector2(193, 257)
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
