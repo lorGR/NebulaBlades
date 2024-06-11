@@ -24,9 +24,7 @@ func _ready():
 	
 func _physics_process(delta):
 	if player != null:
-		var direction = (player.global_position - global_position).normalized()
-		position += direction * SPEED * delta # move towards player pos
-		flip_sprite(direction)
+		handle_movement(delta)
 
 	if slime_hitbox.overlaps_area(player_hitbox):
 		player_hitbox.damage(attack)
@@ -51,4 +49,9 @@ func flip_sprite(direction: Vector2):
 		animated_sprite.flip_h = false
 	elif direction.x < 0:
 		animated_sprite.flip_h = true
+
+func handle_movement(delta):
+	var direction = (player.global_position - global_position).normalized()
+	position += direction * SPEED * delta
+	flip_sprite(direction)
 #endregion

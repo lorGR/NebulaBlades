@@ -7,8 +7,8 @@ extends CharacterBody2D
 @export var ATTACK_SPEED: float = 1.2
 
 @onready var player_hitbox = $HitboxComponent
-
 @onready var animated_sprite = $AnimatedSprite2D
+
 var overlaping_areas = []
 var attack = Attack.new()
 
@@ -17,26 +17,15 @@ var attack = Attack.new()
 func _ready():
 	attack.attack_damage = DAMAGE
 	attack.attack_speed = ATTACK_SPEED
+
 func _process(delta):
 	pass
 
 func _physics_process(delta):
-	var vertical = Input.get_axis("up", "down")
-	var horizontal = Input.get_axis("left", "right")
-	var direction = Vector2(horizontal, vertical)
-	if direction.length() > 0:
-		direction = direction.normalized()
-		position += direction * SPEED * delta
-		if (!player_hitbox.taking_damage):
-			animated_sprite.play("run")
-	else:
-		if (!player_hitbox.taking_damage):
-			animated_sprite.play("idle")
-
+	handle_movement(delta)
+	
 	for hitbox in overlaping_areas:
 		hitbox.damage(attack)
-
-	flip_sprite(direction)
 
 #endregion
 #region signals
@@ -45,7 +34,6 @@ func _on_area_entered(area):
 		var hitbox: HitboxComponent = area
 		hitbox.damage(attack)
 		overlaping_areas.append(area)
-		print("areas inside: " + str(player_hitbox.get_overlapping_areas()))
 
 func _on_area_exited(area):
 	if area is HitboxComponent:
@@ -66,4 +54,18 @@ func flip_sprite(direction: Vector2):
 		animated_sprite.flip_h = false
 	elif direction.x < 0:
 		animated_sprite.flip_h = true
+
+func handle_movement(delta):
+	var vertical = Input.get_axis("up", "down")
+	var horizontal = Input.get_axis("left", "right")
+	var direction = Vector2(horizontal, vertical)
+	if direction.length() > 0:
+		direction = direction.normalized()
+		position += direction * SPEED * delta
+		if (!player_hitbox.taking_damage):
+			animated_sprite.play("run")
+	else:
+		if (!player_hitbox.taking_damage):
+			animated_sprite.play("idle")
+	flip_sprite(direction)
 #endregion

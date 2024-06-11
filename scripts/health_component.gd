@@ -19,7 +19,7 @@ func damage(attack: Attack):
 	health -= attack.attack_damage
 	animated_sprite.play("hurt")
 	if health <= 0:
-		parent.SPEED = 0
+		parent.set_physics_process(false)
 		animated_sprite.play("die")
 
 func get_animated_sprite(parent: Node2D):
