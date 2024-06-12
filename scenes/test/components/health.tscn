@@ -5,10 +5,8 @@ script/source = "extends Node2D
 class_name Health
 
 #region variables
-@export_category(\"Stats\")
-
 var health: float
-var parent: Node2D
+var parent: CharacterBody2D
 var animated_sprite: AnimatedSprite2D
 var taking_damage: bool
 #endregion
