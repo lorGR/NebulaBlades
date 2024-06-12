@@ -44,8 +44,9 @@ func _on_animation_finished():
 		player_hitbox.taking_damage = false
 		animated_sprite.play("idle")
 	if animated_sprite.animation == "die":
-		var mainMenu = "res://scenes/main.tscn"
-		get_tree().change_scene_to_file(mainMenu)
+		get_tree().change_scene_to_file("res://scenes/levels/gameover.tscn")
+		#var mainMenu = "res://scenes/main.tscn"
+		#get_tree().change_scene_to_file(mainMenu)
 
 #endregion
 #region custom
