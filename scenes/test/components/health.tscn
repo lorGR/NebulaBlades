@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqhxc68kpg66l"]
+
+[sub_resource type="GDScript" id="GDScript_ikw5n"]
+script/source = "extends Node2D
+class_name Health
+
+#region variables
+@export_category(\"Stats\")
+
+var health: float
+var parent: Node2D
+var animated_sprite: AnimatedSprite2D
+var taking_damage: bool
+#endregion
+#region built-ins
+func _ready():
+	taking_damage = false
+	parent = get_parent()
+	health = parent.HEALTH
+	animated_sprite = get_animated_sprite(parent)
+#endregion
+#region custom
+func damage(attack: Attack) -> void:
+	if (!taking_damage):
+		taking_damage = true
+		health -= attack.attack_damage
+		print(\"%s is taking %s damage, %s hp left\" % [parent.name, attack.attack_damage, health])
+		animated_sprite.play(\"hurt\")
+		if health <= 0:
+			parent.set_physics_process(false)
+			animated_sprite.play(\"die\")
+		await get_tree().create_timer(attack.attack_speed).timeout
+		taking_damage = false
+	
+
+func get_animated_sprite(parent: Node2D) -> AnimatedSprite2D:
+	for node in parent.get_children():
+		if node is AnimatedSprite2D:
+			return node
+	return null
+#endregion
+"
+
+[node name="Health" type="Node2D"]
+script = SubResource("GDScript_ikw5n")

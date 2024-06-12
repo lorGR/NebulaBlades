@@ -1,0 +1,174 @@
+[gd_scene load_steps=19 format=3 uid="uid://b6knt72blorea"]
+
+[ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/health.tscn" id="1_tv37f"]
+[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee_range.tscn" id="3_2r4f5"]
+
+[sub_resource type="GDScript" id="GDScript_n4d0n"]
+script/source = "extends CharacterBody2D
+
+#region variables
+@export_category(\"STATS\")
+@export var HEALTH: float = 25.0
+@export var SPEED: float = 35.0
+@export var DAMAGE: float = 2.0
+@export var ATTACK_SPEED: float = 1
+@export var RANGE_PERCENT: float = 100.0
+
+@onready var animated_sprite = $Sprite
+@onready var player = %Player
+#endregion
+#region built-ins
+func _physics_process(delta):
+	if player != null:
+		handle_movement(delta)
+
+#endregion
+#region signals
+func _on_animation_finished():
+	if animated_sprite.animation == \"hurt\":
+		animated_sprite.play(\"move\")
+	if animated_sprite.animation == \"die\":
+		queue_free()
+
+#endregion
+#region custom
+func flip_sprite(direction: Vector2):
+	if direction.x > 0:
+		animated_sprite.flip_h = false
+	elif direction.x < 0:
+		animated_sprite.flip_h = true
+
+func handle_movement(delta):
+	var direction = (player.global_position - global_position).normalized()
+	position += direction * SPEED * delta
+	flip_sprite(direction)
+#endregion
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6yvr2"]
+load_path = "res://.godot/imported/slime_green.png-f6349164bf3a0f5189bb927b97af9c58.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3kayr"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yjkw8"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m7k55"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7vjcv"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pk2nr"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(0, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_17ivt"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(24, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wl3hs"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(48, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xa2ob"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(72, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1uecx"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mshhf"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78p1u"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jh5mh"]
+atlas = SubResource("CompressedTexture2D_6yvr2")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lewvk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3kayr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yjkw8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m7k55")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7vjcv")
+}],
+"loop": false,
+"name": &"die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pk2nr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_17ivt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wl3hs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xa2ob")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1uecx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mshhf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_78p1u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jh5mh")
+}],
+"loop": true,
+"name": &"move",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_47j4q"]
+size = Vector2(8, 10)
+
+[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
+script = SubResource("GDScript_n4d0n")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -12)
+sprite_frames = SubResource("SpriteFrames_lewvk")
+animation = &"move"
+autoplay = "move"
+frame_progress = 0.524276
+
+[node name="Hitbox" type="CollisionShape2D" parent="."]
+position = Vector2(0, -5)
+shape = SubResource("RectangleShape2D_47j4q")
+
+[node name="Health" parent="." instance=ExtResource("1_tv37f")]
+
+[node name="MeleeRange" parent="." instance=ExtResource("3_2r4f5")]
+
+[connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]

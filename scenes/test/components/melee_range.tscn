@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3p1nmqpxdacb"]
+
+[sub_resource type="GDScript" id="GDScript_x8u7l"]
+script/source = "extends Area2D
+class_name MeleeRange
+
+#region variables
+@onready var mob: CharacterBody2D = get_parent()
+
+var base_radius = Transform2D(Vector2(1.78, 0), Vector2(0, 1), Vector2(0, 0))
+var min_radius = Transform2D(Vector2(0.4449, 0), Vector2(0, 0.25), Vector2(0, 0))
+
+var overlapping_bodies = []
+var attack = Attack.new()
+#endregion
+
+#region built-ins
+func _ready(): # adjusting range based of inspector RANGE_PERCENT
+	var percentage = mob.RANGE_PERCENT
+	scale_range_by(percentage)
+
+func _physics_process(delta):
+	for body in overlapping_bodies:
+		var other_health = body.get_node(\"Health\")
+		other_health.damage(attack)
+#endregion
+#region signals
+func _on_body_entered(body): # body enters MeleeRange - Range
+	if body != mob: # if not itself
+		if body.has_node(\"Hitbox\"): # make sure it has a hitbox (might be redundant)
+			if body is CharacterBody2D: # might have a hitbox, for example a crate or coin etc.
+				# tho we do want crates with hitboxes
+				overlapping_bodies.append(body)
+				var other: CharacterBody2D = body
+				var other_health = other.get_node(\"Health\")
+				
+				attack.attack_damage = other.DAMAGE
+				attack.attack_speed = other.ATTACK_SPEED
+				
+				other_health.damage(attack)
+
+
+func _on_body_exited(body):
+	if body is CharacterBody2D:
+		overlapping_bodies = overlapping_bodies.filter(func(exited_body): return body != exited_body)
+
+#endregion
+#region custom
+func scale_range_by(percent: float) -> void:
+	# changing the scale of MeleeRange instead of Range
+	var scale_factor = percent / 100.0
+	
+	var m_x = min_radius.x.x
+	var m_y = min_radius.y.y
+	print(\"%s.%s.scale_range_by(%s)\" % [mob.name, name, percent])
+	print(\"scale value: %.2f, percent: %.2f\" % [scale_factor, percent])
+	var r_x = scale.x
+	var r_y = scale.y
+	print(\"current: x: %.2f, y: %.2f\" % [r_x, r_y])
+	var s_x = r_x * scale_factor
+	var s_y = r_x * scale_factor
+	print(\"scaled: x: %.2f, y: %.2f\" % [s_x, s_y])
+	
+	if (r_x + s_x <= m_x):
+		print(\"setting to: x: %.2f, y: %.2f\" % [m_x, m_y])
+		scale.x = m_x
+		scale.y = m_y
+	else:
+		print(\"increasing by: x: %.2f, y: %.2f\" % [s_x, s_y])
+		scale.x += s_x
+		scale.y += s_y
+	print(\"final: x: %.2f, y: %.2f\" % [scale.x, scale.y])
+	print()
+#endregion
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ssb72"]
+
+[node name="MeleeRange" type="Area2D"]
+script = SubResource("GDScript_x8u7l")
+
+[node name="Range" type="CollisionShape2D" parent="."]
+scale = Vector2(0.89, 0.5)
+shape = SubResource("CircleShape2D_ssb72")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

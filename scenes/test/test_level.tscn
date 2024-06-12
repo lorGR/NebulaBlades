@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://coxmfpe3gaewx"]
+
+[ext_resource type="PackedScene" uid="uid://7dy13imcmsm7" path="res://scenes/test/player_test.tscn" id="1_wapnw"]
+[ext_resource type="PackedScene" uid="uid://cr0dr6l1ynwsu" path="res://scenes/test/pickups/range_modifier.tscn" id="2_q8f21"]
+[ext_resource type="PackedScene" uid="uid://b6knt72blorea" path="res://scenes/test/slime_test.tscn" id="3_ar1xd"]
+
+[node name="TestLevel" type="Node2D"]
+
+[node name="RangeModifier" parent="." instance=ExtResource("2_q8f21")]
+position = Vector2(243, 413)
+INCREASE_PERCENT = 50
+
+[node name="RangeModifier2" parent="." instance=ExtResource("2_q8f21")]
+position = Vector2(479, 458)
+INCREASE_PERCENT = 200
+
+[node name="Player" parent="." instance=ExtResource("1_wapnw")]
+unique_name_in_owner = true
+position = Vector2(357, 465)
+
+[node name="Slime" parent="." instance=ExtResource("3_ar1xd")]
+position = Vector2(154, 489)
