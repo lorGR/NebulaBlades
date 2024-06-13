@@ -1,7 +1,7 @@
 [gd_scene load_steps=35 format=3 uid="uid://7dy13imcmsm7"]
 
 [ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/health.tscn" id="1_5t1q8"]
-[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee_range.tscn" id="3_oclhh"]
+[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee.tscn" id="2_nloa7"]
 
 [sub_resource type="GDScript" id="GDScript_8d6a1"]
 script/source = "extends CharacterBody2D
@@ -10,9 +10,6 @@ script/source = "extends CharacterBody2D
 @export_category(\"STATS\")
 @export var HEALTH: float = 100.0
 @export var SPEED: float = 300.0
-@export var DAMAGE: float = 10.0
-@export var ATTACK_SPEED: float = 1.2
-@export var RANGE_PERCENT: float = 100.0
 
 @onready var health = $Health
 @onready var animated_sprite = $Sprite
@@ -38,17 +35,13 @@ func flip_sprite(direction: Vector2):
 		animated_sprite.flip_h = true
 
 func handle_movement(delta):
-	var vertical = Input.get_axis(\"up\", \"down\")
-	var horizontal = Input.get_axis(\"left\", \"right\")
-	var direction = Vector2(horizontal, vertical)
-	if direction.length() > 0:
-		direction = direction.normalized()
-		position += direction * SPEED * delta
-		if (!health.taking_damage):
-			animated_sprite.play(\"run\")
-	else:
-		if (!health.taking_damage):
-			animated_sprite.play(\"idle\")
+	var direction = Input.get_vector(\"left\",\"right\",\"up\",\"down\")
+	velocity = direction * SPEED
+	move_and_slide()
+	if (!health.taking_damage):
+		animated_sprite.play(\"run\")
+	if (!health.taking_damage):
+		animated_sprite.play(\"idle\")
 	flip_sprite(direction)
 #endregion
 "
@@ -294,6 +287,6 @@ shape = SubResource("RectangleShape2D_q6m5k")
 
 [node name="Health" parent="." instance=ExtResource("1_5t1q8")]
 
-[node name="MeleeRange" parent="." instance=ExtResource("3_oclhh")]
+[node name="Melee" parent="." instance=ExtResource("2_nloa7")]
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]

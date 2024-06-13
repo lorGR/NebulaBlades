@@ -1,7 +1,7 @@
 [gd_scene load_steps=19 format=3 uid="uid://b6knt72blorea"]
 
 [ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/health.tscn" id="1_tv37f"]
-[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee_range.tscn" id="3_2r4f5"]
+[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee.tscn" id="2_8dp3f"]
 
 [sub_resource type="GDScript" id="GDScript_n4d0n"]
 script/source = "extends CharacterBody2D
@@ -169,6 +169,6 @@ shape = SubResource("RectangleShape2D_47j4q")
 
 [node name="Health" parent="." instance=ExtResource("1_tv37f")]
 
-[node name="MeleeRange" parent="." instance=ExtResource("3_2r4f5")]
+[node name="Melee" parent="." instance=ExtResource("2_8dp3f")]
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]

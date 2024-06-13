@@ -1,0 +1,74 @@
+[gd_scene load_steps=11 format=3 uid="uid://cmx37emhigrtp"]
+
+[ext_resource type="Texture2D" uid="uid://db0svd48bwdd3" path="res://assets/Free Smoke Fx Pixel 2/Free Smoke Fx  Pixel 04.png" id="1_jen4i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqv78"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ycqj"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ithr"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ikve"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8jtu"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v5cs8"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1se50"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5y1fp"]
+atlas = ExtResource("1_jen4i")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6ptn4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wqv78")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ycqj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ithr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ikve")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k8jtu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v5cs8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1se50")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5y1fp")
+}],
+"loop": false,
+"name": &"slash",
+"speed": 12.0
+}]
+
+[node name="Slash" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_6ptn4")
+animation = &"slash"
+autoplay = "slash"
+frame = 7
+frame_progress = 1.0

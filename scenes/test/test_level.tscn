@@ -16,7 +16,10 @@ INCREASE_PERCENT = 200
 
 [node name="Player" parent="." instance=ExtResource("1_wapnw")]
 unique_name_in_owner = true
-position = Vector2(357, 465)
+position = Vector2(357, 363)
 
 [node name="Slime" parent="." instance=ExtResource("3_ar1xd")]
-position = Vector2(154, 489)
+position = Vector2(293, 497)
+
+[editable path="Player"]
+[editable path="Player/Melee"]
