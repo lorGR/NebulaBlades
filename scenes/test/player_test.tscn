@@ -1,18 +1,19 @@
-[gd_scene load_steps=35 format=3 uid="uid://7dy13imcmsm7"]
+[gd_scene load_steps=36 format=3 uid="uid://7dy13imcmsm7"]
 
 [ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/health.tscn" id="1_5t1q8"]
 [ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee.tscn" id="2_nloa7"]
+[ext_resource type="PackedScene" uid="uid://cmx37emhigrtp" path="res://scenes/test/vfx/slash.tscn" id="3_h6a03"]
 
 [sub_resource type="GDScript" id="GDScript_8d6a1"]
 script/source = "extends CharacterBody2D
 
 #region variables
-@export_category(\"STATS\")
+@export_category(\"Stats\")
 @export var HEALTH: float = 100.0
 @export var SPEED: float = 300.0
 
-@onready var health = $Health
-@onready var animated_sprite = $Sprite
+@onready var _melee = $Melee
+@onready var _sprite = $Sprite
 #endregion
 #region built-ins
 func _physics_process(delta):
@@ -21,27 +22,27 @@ func _physics_process(delta):
 #endregion
 #region signals
 func _on_animation_finished():
-	if animated_sprite.animation == \"hurt\" || animated_sprite.animation == \"run\":
-		animated_sprite.play(\"idle\")
-	if animated_sprite.animation == \"die\":
+	if _sprite.animation == \"hurt\" || _sprite.animation == \"run\":
+		_sprite.play(\"idle\")
+	if _sprite.animation == \"die\":
 		get_tree().change_scene_to_file(\"res://scenes/levels/gameover.tscn\")
 
 #endregion
 #region custom
 func flip_sprite(direction: Vector2):
 	if direction.x > 0:
-		animated_sprite.flip_h = false
+		_sprite.flip_h = false
 	elif direction.x < 0:
-		animated_sprite.flip_h = true
+		_sprite.flip_h = true
 
 func handle_movement(delta):
 	var direction = Input.get_vector(\"left\",\"right\",\"up\",\"down\")
 	velocity = direction * SPEED
 	move_and_slide()
-	if (!health.taking_damage):
-		animated_sprite.play(\"run\")
-	if (!health.taking_damage):
-		animated_sprite.play(\"idle\")
+	if (!_melee._is_damaging):
+		_sprite.play(\"run\")
+	if (!_melee._is_damaging):
+		_sprite.play(\"idle\")
 	flip_sprite(direction)
 #endregion
 "
@@ -275,18 +276,19 @@ size = Vector2(9, 7)
 script = SubResource("GDScript_8d6a1")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+z_index = 1
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_l0p0v")
 animation = &"die"
 autoplay = "idle"
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
-visible = false
 position = Vector2(-0.5, -3.5)
 shape = SubResource("RectangleShape2D_q6m5k")
 
 [node name="Health" parent="." instance=ExtResource("1_5t1q8")]
 
 [node name="Melee" parent="." instance=ExtResource("2_nloa7")]
+SPRITE_SCENE = ExtResource("3_h6a03")
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]

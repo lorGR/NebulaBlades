@@ -11,15 +11,24 @@ position = Vector2(243, 413)
 INCREASE_PERCENT = 50
 
 [node name="RangeModifier2" parent="." instance=ExtResource("2_q8f21")]
-position = Vector2(479, 458)
+position = Vector2(243, 358)
 INCREASE_PERCENT = 200
 
 [node name="Player" parent="." instance=ExtResource("1_wapnw")]
 unique_name_in_owner = true
-position = Vector2(357, 363)
+position = Vector2(275, 429)
 
 [node name="Slime" parent="." instance=ExtResource("3_ar1xd")]
-position = Vector2(293, 497)
+position = Vector2(264, 468)
 
-[editable path="Player"]
-[editable path="Player/Melee"]
+[node name="Slime2" parent="." instance=ExtResource("3_ar1xd")]
+position = Vector2(264, 468)
+
+[node name="Slime3" parent="." instance=ExtResource("3_ar1xd")]
+position = Vector2(285, 447)
+
+[node name="Slime4" parent="." instance=ExtResource("3_ar1xd")]
+position = Vector2(264, 447)
+
+[node name="Slime5" parent="." instance=ExtResource("3_ar1xd")]
+position = Vector2(285, 468)

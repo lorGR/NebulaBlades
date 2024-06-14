@@ -1,72 +1,75 @@
 [gd_scene load_steps=4 format=3 uid="uid://b3p1nmqpxdacb"]
 
-[ext_resource type="PackedScene" uid="uid://cmx37emhigrtp" path="res://scenes/test/vfx/slash.tscn" id="1_alyaw"]
-
 [sub_resource type="GDScript" id="GDScript_x8u7l"]
 script/source = "extends Area2D
-class_name Melee
 
 #region variables
 @export_category(\"Stats\")
+@export var PROJECTILES: int = 1 # amount of enemies that will be hit simultaneously 
 @export var ATTACK_SPEED: float = 1.0
 @export var ATTACK_DAMAGE: float = 5.0
 @export var RANGE_PERCENT: float = 100.0
-@export var SPRITE: PackedScene
 
-@onready var mob: CharacterBody2D = get_parent()
+# used to asign a scene 
+# scene should have a AnimatedSprite2D with an animation named default
+@export var SPRITE_SCENE: PackedScene
 
-var base_radius = Transform2D(Vector2(1.78, 0), Vector2(0, 1), Vector2(0, 0))
-var min_radius = Transform2D(Vector2(0.4449, 0), Vector2(0, 0.25), Vector2(0, 0))
+# used in Range (CollisionShape2D) to set its scale
+@export var BASE_RADIUS = Vector2(0.89, 0.5)
 
-var overlapping_bodies = []
-var attack = Attack.new()
-var slash: AnimatedSprite2D
+@onready var CHARACTER_BODY: CharacterBody2D = get_parent()
+
+var _min_radius = Vector2(0.4449, 0.25)
+var _overlap_bodies: Array[CharacterBody2D] = []
+var _attack = Attack.new()
+var _is_damaging: bool = false
+var _sprite: AnimatedSprite2D
+var _sprites: Array[AnimatedSprite2D] = []
 #endregion
 
 #region built-ins
-func _ready(): # adjusting range based of inspector RANGE_PERCENT
-	slash = self.SPRITE.instantiate()	
-	var percentage = self.RANGE_PERCENT
-	scale_range_by(percentage)
+func _ready():
+	# Adjusting range based on inspector RANGE_PERCENT
+	if SPRITE_SCENE == null:
+		print(\"Error: SPRITE PackedScene is not assigned.\")
+		return
+
+	scale_range_by(RANGE_PERCENT)
+	_sprite = SPRITE_SCENE.instantiate()
+	for p in range(PROJECTILES):
+		_sprites.append(_sprite.duplicate())
+
+	# signals for body entering and exiting the area
+	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
 
 func _physics_process(delta):
-	for body in overlapping_bodies:
-		var other_health = body.get_node(\"Health\")
-		other_health.damage(attack)
-		if (other_health.taking_damage):
-			get_parent().get_parent().add_child(slash)
-			slash.position = body.global_position
-			slash.play(\"slash\")
+	attack_closest_bodies()
 #endregion
-#region signals
-func _on_body_entered(body): # body enters Melee - Range
-	if body != mob: # if not itself
-		if body.has_node(\"Hitbox\"): # make sure it has a hitbox (might be redundant)
-			if body is CharacterBody2D: # might have a hitbox, for example a crate or coin etc.
-				# tho we do want crates with hitboxes
-				overlapping_bodies.append(body)
-				var other: CharacterBody2D = body
-				var other_health = other.get_node(\"Health\")
-				
-				attack.attack_damage = self.ATTACK_DAMAGE
-				attack.attack_speed = self.ATTACK_SPEED
-				
-				other_health.damage(attack)
 
+#region signals
+func _on_body_entered(body): # Body enters Melee - Range
+	if body == CHARACTER_BODY:
+		return
+	if body.has_node(\"Hitbox\"):
+		if body is CharacterBody2D:
+			_overlap_bodies.append(body)
+			_attack.attack_damage = ATTACK_DAMAGE
+			_attack.attack_speed = ATTACK_SPEED
 
 func _on_body_exited(body):
 	if body is CharacterBody2D:
-		overlapping_bodies = overlapping_bodies.filter(func(exited_body): return body != exited_body)
-
+		_overlap_bodies = _overlap_bodies.filter(func(exited_body): return body != exited_body)
 #endregion
+
 #region custom
 func scale_range_by(percent: float) -> void:
-	# changing the scale of Melee instead of Range
+	# Changing the scale of Melee instead of Range
 	var scale_factor = percent / 100.0
 	
-	var m_x = min_radius.x.x
-	var m_y = min_radius.y.y
-	print(\"%s.%s.scale_range_by(%s)\" % [mob.name, name, percent])
+	var m_x = _min_radius.x
+	var m_y = _min_radius.y
+	print(\"%s.%s.scale_range_by(%s)\" % [CHARACTER_BODY.name, name, percent])
 	print(\"scale value: %.2f, percent: %.2f\" % [scale_factor, percent])
 	var r_x = scale.x
 	var r_y = scale.y
@@ -85,18 +88,84 @@ func scale_range_by(percent: float) -> void:
 		scale.y += s_y
 	print(\"final: x: %.2f, y: %.2f\" % [scale.x, scale.y])
 	print()
+
+func get_closest(bodies: Array[CharacterBody2D], attacked_bodies: Array[CharacterBody2D], projectiles: int) -> Array[CharacterBody2D]:
+	var closest_bodies: Array[CharacterBody2D] = []
+	var closest_distances: Array[float] = []
+	
+	for body in bodies:
+		if body == CHARACTER_BODY:
+			continue
+		if body in attacked_bodies:
+			continue
+		
+		var distance = CHARACTER_BODY.global_position.distance_to(body.global_position)
+		
+		if closest_bodies.size() < projectiles:
+			closest_bodies.append(body)
+			closest_distances.append(distance)
+		else:
+			# find the farthest body in the current closest_bodies
+			var max_distance = -INF
+			var max_index = -1
+			for i in range(projectiles):
+				if closest_distances[i] > max_distance:
+					max_distance = closest_distances[i]
+					max_index = i
+			
+			# replace the farthest body if the current one is closer
+			if distance < max_distance:
+				closest_bodies[max_index] = body
+				closest_distances[max_index] = distance
+
+	return closest_bodies
+
+func attack_closest_bodies() -> void:
+	if not _is_damaging:
+		var attacked_bodies: Array[CharacterBody2D] = []
+
+		var closest_bodies = get_closest(_overlap_bodies, attacked_bodies, PROJECTILES)
+		for body in closest_bodies:
+			var other_health = body.get_node(\"Health\")
+			if other_health != null and not body.is_in_group(get_parent().get_groups()[0]):
+				var index = closest_bodies.find(body)
+				if index < 0 or index >= _sprites.size():
+					print(\"Error: Index out of bounds: \", index)
+					continue
+
+				var tmp_sprite: AnimatedSprite2D = _sprites[index]
+				get_parent().get_parent().add_child(tmp_sprite)
+				tmp_sprite.position = body.global_position
+				tmp_sprite.speed_scale = _attack.attack_speed
+
+				tmp_sprite.z_index = 5 # needs to be changed later on
+				_is_damaging = true
+				tmp_sprite.play(\"default\")
+				other_health.damage(_attack)
+				attacked_bodies.append(body)  # Keep track of attacked bodies in this cycle
+				await get_tree().create_timer(_attack.attack_speed).timeout
+				_is_damaging = false
 #endregion
 "
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ssb72"]
 
+[sub_resource type="GDScript" id="GDScript_inxr3"]
+script/source = "extends CollisionShape2D
+
+var PARENT_AREA: Area2D
+
+func _ready():
+	PARENT_AREA = get_parent()
+	self.scale = PARENT_AREA.BASE_RADIUS
+"
+
 [node name="Melee" type="Area2D"]
 script = SubResource("GDScript_x8u7l")
-SPRITE = ExtResource("1_alyaw")
 
 [node name="Range" type="CollisionShape2D" parent="."]
-scale = Vector2(0.89, 0.5)
 shape = SubResource("CircleShape2D_ssb72")
+script = SubResource("GDScript_inxr3")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_body_exited"]

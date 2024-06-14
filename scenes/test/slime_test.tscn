@@ -1,45 +1,48 @@
-[gd_scene load_steps=19 format=3 uid="uid://b6knt72blorea"]
+[gd_scene load_steps=20 format=3 uid="uid://b6knt72blorea"]
 
 [ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/health.tscn" id="1_tv37f"]
 [ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee.tscn" id="2_8dp3f"]
+[ext_resource type="PackedScene" uid="uid://cmx37emhigrtp" path="res://scenes/test/vfx/slash.tscn" id="3_qhmfn"]
 
 [sub_resource type="GDScript" id="GDScript_n4d0n"]
 script/source = "extends CharacterBody2D
 
 #region variables
-@export_category(\"STATS\")
+@export_category(\"Stats\")
 @export var HEALTH: float = 25.0
 @export var SPEED: float = 35.0
 @export var DAMAGE: float = 2.0
 @export var ATTACK_SPEED: float = 1
 @export var RANGE_PERCENT: float = 100.0
 
-@onready var animated_sprite = $Sprite
-@onready var player = %Player
+@onready var _sprite = $Sprite
+@onready var _player = %Player
+
 #endregion
 #region built-ins
 func _physics_process(delta):
-	if player != null:
-		handle_movement(delta)
+	if _player != null:
+		pass
+		#handle_movement(delta) 
 
 #endregion
 #region signals
 func _on_animation_finished():
-	if animated_sprite.animation == \"hurt\":
-		animated_sprite.play(\"move\")
-	if animated_sprite.animation == \"die\":
+	if _sprite.animation == \"hurt\":
+		_sprite.play(\"move\")
+	if _sprite.animation == \"die\":
 		queue_free()
 
 #endregion
 #region custom
 func flip_sprite(direction: Vector2):
 	if direction.x > 0:
-		animated_sprite.flip_h = false
+		_sprite.flip_h = false
 	elif direction.x < 0:
-		animated_sprite.flip_h = true
+		_sprite.flip_h = true
 
 func handle_movement(delta):
-	var direction = (player.global_position - global_position).normalized()
+	var direction = (_player.global_position - global_position).normalized()
 	position += direction * SPEED * delta
 	flip_sprite(direction)
 #endregion
@@ -151,12 +154,14 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_47j4q"]
-size = Vector2(8, 10)
+size = Vector2(8, 9)
 
 [node name="Slime" type="CharacterBody2D" groups=["enemy"]]
 script = SubResource("GDScript_n4d0n")
+DAMAGE = 10.0
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+z_index = 1
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_lewvk")
 animation = &"move"
@@ -164,11 +169,12 @@ autoplay = "move"
 frame_progress = 0.524276
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
-position = Vector2(0, -5)
+position = Vector2(0, -5.5)
 shape = SubResource("RectangleShape2D_47j4q")
 
 [node name="Health" parent="." instance=ExtResource("1_tv37f")]
 
 [node name="Melee" parent="." instance=ExtResource("2_8dp3f")]
+SPRITE_SCENE = ExtResource("3_qhmfn")
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]
