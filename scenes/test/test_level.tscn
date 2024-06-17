@@ -18,10 +18,6 @@ INCREASE_PERCENT = 2000.0
 unique_name_in_owner = true
 position = Vector2(275, 429)
 
-[node name="AttackArea" parent="Player" index="2"]
-PROJECTILES = 3
-ATTACK_DAMAGE = 0.0
-
 [node name="Slime" parent="." instance=ExtResource("3_ar1xd")]
 position = Vector2(264, 468)
 
@@ -36,5 +32,3 @@ position = Vector2(264, 447)
 
 [node name="Slime5" parent="." instance=ExtResource("3_ar1xd")]
 position = Vector2(285, 468)
-
-[editable path="Player"]

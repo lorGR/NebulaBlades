@@ -42,7 +42,7 @@ func _ready():
 	body_exited.connect(_on_body_exited)
 
 func _physics_process(delta):
-	attack_closest_bodies()
+	attack_bodies() # can either be random on closest, accepts a bool
 #endregion
 
 #region signals
@@ -87,7 +87,7 @@ func scale_range_by(percent: float) -> void:
 	print("final: x: %.2f, y: %.2f" % [scale.x, scale.y])
 	print()
 
-func get_closest(bodies: Array[CharacterBody2D], attacked_bodies: Array[CharacterBody2D], projectiles: int) -> Array[CharacterBody2D]:
+func get_closest_bodies(bodies: Array[CharacterBody2D], attacked_bodies: Array[CharacterBody2D], projectiles: int) -> Array[CharacterBody2D]:
 	var closest_bodies: Array[CharacterBody2D] = []
 	var closest_distances: Array[float] = []
 	
@@ -118,12 +118,29 @@ func get_closest(bodies: Array[CharacterBody2D], attacked_bodies: Array[Characte
 
 	return closest_bodies
 
-func attack_closest_bodies() -> void:
-	if not _is_damaging:
-		var attacked_bodies: Array[CharacterBody2D] = []
-		var closest_bodies = get_closest(_overlap_bodies, attacked_bodies, PROJECTILES)
-		
-		_is_damaging = true
+func get_random_bodies(bodies: Array[CharacterBody2D], attacked_bodies: Array[CharacterBody2D], projectiles: int) -> Array[CharacterBody2D]:
+	var random_bodies: Array[CharacterBody2D] = _overlap_bodies
+	random_bodies.shuffle()
+	return random_bodies.slice(0,projectiles)
+
+func attack_bodies(randomly: bool = true):
+	if _is_damaging:
+		return
+
+	var attacked_bodies: Array[CharacterBody2D] = []
+	_is_damaging = true
+
+	if randomly:
+		var random_bodies = get_random_bodies(_overlap_bodies, attacked_bodies, PROJECTILES)
+		for body in random_bodies:
+			var other_health: Health = body.get_node("Health")
+			if other_health is Health and not body.is_in_group(CHARACTER_BODY.get_groups()[0]):
+				var index = random_bodies.find(body)
+				handle_projectile_sprite(body, index)
+				other_health.damage(_attack)
+				attacked_bodies.append(body)
+	else: # attack closest bodies
+		var closest_bodies = get_closest_bodies(_overlap_bodies, attacked_bodies, PROJECTILES)
 		for body in closest_bodies:
 			var other_health: Health = body.get_node("Health")
 			if other_health is Health and not body.is_in_group(CHARACTER_BODY.get_groups()[0]):
@@ -132,8 +149,8 @@ func attack_closest_bodies() -> void:
 				other_health.damage(_attack)
 				attacked_bodies.append(body)  # Keep track of attacked bodies in this cycle
 
-		await get_tree().create_timer(_attack.attack_speed).timeout
-		_is_damaging = false
+	await get_tree().create_timer(_attack.attack_speed).timeout
+	_is_damaging = false
 
 # _sprites has an array of _sprite * PROJECTILES set in _ready()
 func handle_projectile_sprite(body, index): 

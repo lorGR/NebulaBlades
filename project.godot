@@ -25,6 +25,17 @@ window/size/viewport_width=800
 window/size/viewport_height=600
 window/stretch/mode="viewport"
 
+[editor]
+
+version_control/autoload_on_startup=true
+
+[importer_defaults]
+
+animation_library={
+"animation/fps": 60.0,
+"animation/trimming": true
+}
+
 [input]
 
 up={
