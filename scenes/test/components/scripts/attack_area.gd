@@ -42,7 +42,7 @@ func _ready():
 	body_exited.connect(_on_body_exited)
 
 func _physics_process(delta):
-	attack_bodies() # can either be random on closest, accepts a bool
+	handle_attack() # can either be random on closest, accepts a bool
 #endregion
 
 #region signals
@@ -123,7 +123,7 @@ func get_random_bodies(bodies: Array[CharacterBody2D], attacked_bodies: Array[Ch
 	random_bodies.shuffle()
 	return random_bodies.slice(0,projectiles)
 
-func attack_bodies(randomly: bool = true):
+func handle_attack(randomly: bool = true):
 	if _is_damaging:
 		return
 
