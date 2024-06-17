@@ -1,8 +1,8 @@
 [gd_scene load_steps=20 format=3 uid="uid://b6knt72blorea"]
 
-[ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/health.tscn" id="1_tv37f"]
-[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee.tscn" id="2_8dp3f"]
-[ext_resource type="PackedScene" uid="uid://cmx37emhigrtp" path="res://scenes/test/vfx/slash.tscn" id="3_qhmfn"]
+[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/scenes/attack_area.tscn" id="1_kx1m5"]
+[ext_resource type="PackedScene" uid="uid://bsgjxy7y5vfiv" path="res://scenes/test/vfx/push.tscn" id="2_cagd1"]
+[ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/scenes/health.tscn" id="3_j813b"]
 
 [sub_resource type="GDScript" id="GDScript_n4d0n"]
 script/source = "extends CharacterBody2D
@@ -172,9 +172,9 @@ frame_progress = 0.524276
 position = Vector2(0, -5.5)
 shape = SubResource("RectangleShape2D_47j4q")
 
-[node name="Health" parent="." instance=ExtResource("1_tv37f")]
+[node name="AttackArea" parent="." instance=ExtResource("1_kx1m5")]
+SPRITE_SCENE = ExtResource("2_cagd1")
 
-[node name="Melee" parent="." instance=ExtResource("2_8dp3f")]
-SPRITE_SCENE = ExtResource("3_qhmfn")
+[node name="Health" parent="." instance=ExtResource("3_j813b")]
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]

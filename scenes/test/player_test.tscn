@@ -1,7 +1,7 @@
 [gd_scene load_steps=36 format=3 uid="uid://7dy13imcmsm7"]
 
-[ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/health.tscn" id="1_5t1q8"]
-[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/melee.tscn" id="2_nloa7"]
+[ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/test/components/scenes/attack_area.tscn" id="1_8t4r4"]
+[ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/test/components/scenes/health.tscn" id="2_q3pu0"]
 [ext_resource type="PackedScene" uid="uid://cmx37emhigrtp" path="res://scenes/test/vfx/slash.tscn" id="3_h6a03"]
 
 [sub_resource type="GDScript" id="GDScript_8d6a1"]
@@ -12,7 +12,7 @@ script/source = "extends CharacterBody2D
 @export var HEALTH: float = 100.0
 @export var SPEED: float = 300.0
 
-@onready var _melee = $Melee
+@onready var _melee: AttackArea = $AttackArea
 @onready var _sprite = $Sprite
 #endregion
 #region built-ins
@@ -286,9 +286,10 @@ autoplay = "idle"
 position = Vector2(-0.5, -3.5)
 shape = SubResource("RectangleShape2D_q6m5k")
 
-[node name="Health" parent="." instance=ExtResource("1_5t1q8")]
-
-[node name="Melee" parent="." instance=ExtResource("2_nloa7")]
+[node name="AttackArea" parent="." instance=ExtResource("1_8t4r4")]
+PROJECTILES = 2
 SPRITE_SCENE = ExtResource("3_h6a03")
+
+[node name="Health" parent="." instance=ExtResource("2_q3pu0")]
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]
