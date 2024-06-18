@@ -1,22 +1,71 @@
-[gd_scene load_steps=4 format=3 uid="uid://b3p1nmqpxdacb"]
+[gd_scene load_steps=3 format=3 uid="uid://b3p1nmqpxdacb"]
 
 [ext_resource type="Script" path="res://scenes/components/scripts/attack_area.gd" id="1_7ly8f"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_ssb72"]
+[sub_resource type="GDScript" id="GDScript_uvw81"]
+script/source = "extends CollisionPolygon2D
 
-[sub_resource type="GDScript" id="GDScript_inxr3"]
-script/source = "extends CollisionShape2D
-
+# Constants and variables
 var PARENT_AREA: Area2D
+var PRECISION: int = 32 # higher value = less performance
+
+var _base_radius  # Base dimensions for the polygon
+var _min_radius = Vector2(0.4, 0.237)  # Minimum dimensions to maintain
 
 func _ready():
-	PARENT_AREA = get_parent()
-	self.scale = PARENT_AREA.BASE_RADIUS
+	PARENT_AREA = get_parent() as Area2D
+	_base_radius = PARENT_AREA.BASE_RADIUS
+	
+	init_polygon()
+	PARENT_AREA.area_entered.connect(_on_area_entered)
+
+func init_polygon():
+	var points = PackedVector2Array()
+	for i in range(PRECISION):
+		var angle = 2 * PI * i / PRECISION
+		var x = cos(angle) * _base_radius.x * 10
+		var y = sin(angle) * _base_radius.y * 10
+		points.append(Vector2(x, y))
+	polygon = points
+
+func scale_range_by(percent: float) -> void:
+	var scale_factor = percent / 100.0
+	
+	var m_x = _min_radius.x
+	var m_y = _min_radius.y
+	print(\"%s.scale_range_by(%s)\" % [name, percent])
+	print(\"scale value: %.2f, percent: %.2f\" % [scale_factor, percent])
+
+	var r_x = scale.x
+	var r_y = scale.y
+	print(\"current: x: %.2f, y: %.2f\" % [r_x, r_y])
+
+	var s_x = r_x * scale_factor
+	var s_y = r_y * scale_factor
+	print(\"scaled: x: %.2f, y: %.2f\" % [s_x, s_y])
+
+	if (r_x + s_x <= m_x):
+		print(\"setting to: x: %.2f, y: %.2f\" % [m_x, m_y])
+		scale.x = m_x
+		scale.y = m_y
+	else:
+		print(\"increasing by: x: %.2f, y: %.2f\" % [s_x, s_y])
+		scale.x += s_x
+		scale.y += s_y
+
+	print(\"final: x: %.2f, y: %.2f\" % [scale.x, scale.y])
+	print()
+
+func _on_area_entered(area):
+	if area.is_in_group(\"pickup\"):
+		scale_range_by(area.INCREASE_PERCENT)
+		area.queue_free()
 "
 
 [node name="AttackArea" type="Area2D"]
+scale = Vector2(0.89, 0.5)
 script = ExtResource("1_7ly8f")
+BASE_RADIUS = Vector2(1, 1)
 
-[node name="Range" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_ssb72")
-script = SubResource("GDScript_inxr3")
+[node name="Range" type="CollisionPolygon2D" parent="."]
+script = SubResource("GDScript_uvw81")

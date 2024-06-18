@@ -1,9 +1,17 @@
-[gd_scene load_steps=36 format=3 uid="uid://7dy13imcmsm7"]
+[gd_scene load_steps=39 format=3 uid="uid://7dy13imcmsm7"]
 
 [ext_resource type="PackedScene" uid="uid://b3p1nmqpxdacb" path="res://scenes/components/attack_area.tscn" id="1_8t4r4"]
 [ext_resource type="Script" path="res://scenes/entities/scripts/player.gd" id="1_yw4k6"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="2_24qml"]
 [ext_resource type="PackedScene" uid="uid://dqhxc68kpg66l" path="res://scenes/components/health.tscn" id="2_q3pu0"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_crqg6"]
 [ext_resource type="PackedScene" uid="uid://cmx37emhigrtp" path="res://scenes/vfx/slash.tscn" id="3_h6a03"]
+
+[sub_resource type="Resource" id="Resource_aac77"]
+script = ExtResource("3_crqg6")
+duration = 1.0
+transition = 0
+ease = 2
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mm3f8"]
 load_path = "res://.godot/imported/knight.png-7c67c83d34932624952797d9e971a644.ctex"
@@ -233,6 +241,11 @@ size = Vector2(9, 7)
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_yw4k6")
 
+[node name="PhantomCamera2D" type="Node2D" parent="."]
+script = ExtResource("2_24qml")
+follow_mode = 2
+tween_resource = SubResource("Resource_aac77")
+
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 z_index = 1
 position = Vector2(0, -12)
@@ -246,6 +259,7 @@ shape = SubResource("RectangleShape2D_q6m5k")
 
 [node name="AttackArea" parent="." instance=ExtResource("1_8t4r4")]
 PROJECTILES = 2
+ATTACK_DAMAGE = 0.0
 SPRITE_SCENE = ExtResource("3_h6a03")
 
 [node name="Health" parent="." instance=ExtResource("2_q3pu0")]

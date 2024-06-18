@@ -13,18 +13,16 @@ class_name AttackArea extends Area2D
 @export var SPRITE_SCENE: PackedScene
 
 # used in Range (CollisionShape2D) to set its scale
-@export var BASE_RADIUS = Vector2(0.89, 0.5)
+@export var BASE_RADIUS = Vector2(0.2, 0.1185)
 
 @onready var CHARACTER_BODY: CharacterBody2D = get_parent()
 
-var _min_radius = Vector2(0.4449, 0.25)
-var _overlap_bodies: Array[CharacterBody2D] = []
 var _attack = Attack.new()
 var _is_damaging: bool = false
 var _sprite: AnimatedSprite2D
 var _sprites: Array[AnimatedSprite2D] = []
+var _overlap_bodies: Array[CharacterBody2D] = []
 #endregion
-
 #region built-ins
 func _ready():
 	# Adjusting range based on inspector RANGE_PERCENT
@@ -32,11 +30,10 @@ func _ready():
 		print("Error: SPRITE PackedScene is not assigned.")
 		return
 
-	scale_range_by(RANGE_PERCENT)
 	_sprite = SPRITE_SCENE.instantiate()
 	for p in range(PROJECTILES):
 		_sprites.append(_sprite.duplicate())
-
+		
 	# signals for body entering and exiting the area
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
@@ -44,7 +41,6 @@ func _ready():
 func _physics_process(delta):
 	handle_attack() # can either be random on closest, accepts a bool
 #endregion
-
 #region signals
 func _on_body_entered(body): # Body enters Melee - Range
 	if body == CHARACTER_BODY:
@@ -59,34 +55,7 @@ func _on_body_exited(body):
 	if body is CharacterBody2D:
 		_overlap_bodies = _overlap_bodies.filter(func(exited_body): return body != exited_body)
 #endregion
-
 #region custom
-func scale_range_by(percent: float) -> void:
-	# Changing the scale of Melee instead of Range
-	var scale_factor = percent / 100.0
-	
-	var m_x = _min_radius.x
-	var m_y = _min_radius.y
-	print("%s.%s.scale_range_by(%s)" % [CHARACTER_BODY.name, name, percent])
-	print("scale value: %.2f, percent: %.2f" % [scale_factor, percent])
-	var r_x = scale.x
-	var r_y = scale.y
-	print("current: x: %.2f, y: %.2f" % [r_x, r_y])
-	var s_x = r_x * scale_factor
-	var s_y = r_x * scale_factor
-	print("scaled: x: %.2f, y: %.2f" % [s_x, s_y])
-	
-	if (r_x + s_x <= m_x):
-		print("setting to: x: %.2f, y: %.2f" % [m_x, m_y])
-		scale.x = m_x
-		scale.y = m_y
-	else:
-		print("increasing by: x: %.2f, y: %.2f" % [s_x, s_y])
-		scale.x += s_x
-		scale.y += s_y
-	print("final: x: %.2f, y: %.2f" % [scale.x, scale.y])
-	print()
-
 func get_closest_bodies(bodies: Array[CharacterBody2D], attacked_bodies: Array[CharacterBody2D], projectiles: int) -> Array[CharacterBody2D]:
 	var closest_bodies: Array[CharacterBody2D] = []
 	var closest_distances: Array[float] = []

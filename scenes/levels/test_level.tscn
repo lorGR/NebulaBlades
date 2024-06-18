@@ -7,12 +7,11 @@
 [node name="TestLevel" type="Node2D"]
 
 [node name="RangeModifier" parent="." instance=ExtResource("2_q8f21")]
-position = Vector2(243, 413)
-INCREASE_PERCENT = 50
+position = Vector2(67, 60)
+INCREASE_PERCENT = -5000.0
 
 [node name="RangeModifier2" parent="." instance=ExtResource("2_q8f21")]
-position = Vector2(243, 358)
-INCREASE_PERCENT = 2000.0
+position = Vector2(168, 266)
 
 [node name="Player" parent="." instance=ExtResource("1_wapnw")]
 unique_name_in_owner = true
