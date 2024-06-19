@@ -6,7 +6,7 @@ class_name AttackArea extends Area2D
 @export var ATTACK_SPEED: float = 1.0
 @export var ATTACK_DAMAGE: float = 5.0
 @export var RANGE_PERCENT: float = 100.0
-@export var RANGED: bool = false
+@export var IS_PROJECTILE: bool = false
 
 # used to asign a scene 
 # scene should have a AnimatedSprite2D with an animation named default
@@ -25,7 +25,6 @@ var _overlap_bodies: Array[CharacterBody2D] = []
 #endregion
 #region built-ins
 func _ready():
-	# Adjusting range based on inspector RANGE_PERCENT
 	if SPRITE_SCENE == null:
 		print("Error: SPRITE PackedScene is not assigned.")
 		return
@@ -33,7 +32,7 @@ func _ready():
 	_sprite = SPRITE_SCENE.instantiate()
 	for p in range(PROJECTILES):
 		_sprites.append(_sprite.duplicate())
-		
+
 	# signals for body entering and exiting the area
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
@@ -79,7 +78,7 @@ func get_closest_bodies(bodies: Array[CharacterBody2D], attacked_bodies: Array[C
 				if closest_distances[i] > max_distance:
 					max_distance = closest_distances[i]
 					max_index = i
-			
+
 			# replace the farthest body if the current one is closer
 			if distance < max_distance:
 				closest_bodies[max_index] = body
@@ -92,10 +91,10 @@ func get_random_bodies(bodies: Array[CharacterBody2D], attacked_bodies: Array[Ch
 	random_bodies.shuffle()
 	return random_bodies.slice(0,projectiles)
 
-func handle_attack(randomly: bool = true):
+func handle_attack(randomly: bool = true) -> void:
 	if _is_damaging:
 		return
-
+		
 	var attacked_bodies: Array[CharacterBody2D] = []
 	_is_damaging = true
 

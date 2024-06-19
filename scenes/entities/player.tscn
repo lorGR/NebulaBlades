@@ -7,12 +7,6 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_crqg6"]
 [ext_resource type="PackedScene" uid="uid://cmx37emhigrtp" path="res://scenes/vfx/slash.tscn" id="3_h6a03"]
 
-[sub_resource type="Resource" id="Resource_aac77"]
-script = ExtResource("3_crqg6")
-duration = 1.0
-transition = 0
-ease = 2
-
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mm3f8"]
 load_path = "res://.godot/imported/knight.png-7c67c83d34932624952797d9e971a644.ctex"
 
@@ -238,19 +232,20 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q6m5k"]
 size = Vector2(9, 7)
 
+[sub_resource type="Resource" id="Resource_lgpmf"]
+script = ExtResource("3_crqg6")
+duration = 1.0
+transition = 0
+ease = 2
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_yw4k6")
-
-[node name="PhantomCamera2D" type="Node2D" parent="."]
-script = ExtResource("2_24qml")
-follow_mode = 2
-tween_resource = SubResource("Resource_aac77")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 z_index = 1
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_l0p0v")
-animation = &"die"
+animation = &"run"
 autoplay = "idle"
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
@@ -263,5 +258,13 @@ ATTACK_DAMAGE = 0.0
 SPRITE_SCENE = ExtResource("3_h6a03")
 
 [node name="Health" parent="." instance=ExtResource("2_q3pu0")]
+
+[node name="PhantomCamera2D" type="Node2D" parent="." node_paths=PackedStringArray("follow_target")]
+script = ExtResource("2_24qml")
+follow_mode = 2
+follow_target = NodePath("..")
+zoom = Vector2(2, 2)
+tween_resource = SubResource("Resource_lgpmf")
+draw_limits = true
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_animation_finished"]
